@@ -80,7 +80,7 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
                 if (md.is_dir()) {
                     if (tos(&e, target)) {
                         println!("{:?}", entry.path());
-                        println!("{:?}", metadata(entry.path()).unwrap());
+                        // println!("{:?}", metadata(entry.path()).unwrap());
                     }
                     let path_buf = entry.path();
                     lop(&path_buf, target);
