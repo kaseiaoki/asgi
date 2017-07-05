@@ -81,7 +81,6 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
                     if (tos(&e, target)) {
                         println!("{:?}", entry.path());
                         println!("{:?}", metadata(entry.path()).unwrap());
-                        process::exit(0);
                     }
                     let path_buf = entry.path();
                     lop(&path_buf, target);
@@ -94,9 +93,7 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
 fn sd(target: &'static str) {
     let t = target.clone();
     let cd = env::current_dir().unwrap();
-    if (tos(&cd, t)) {
-        process::exit(0);
-    }
+    tos(&cd, t);
     if let Ok(entries) = fs::read_dir("") {
         for entry in entries {
             if let Ok(entry) = entry {
