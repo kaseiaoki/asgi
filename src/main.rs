@@ -35,7 +35,7 @@ fn check(d: Vec<String>, t: &'static str) -> bool {
             catch = true;
         }
     }
-    return catch;
+    catch
 }
 
 fn lop(p: &std::path::PathBuf, target: &'static str) {
