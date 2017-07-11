@@ -13,6 +13,9 @@ use std::vec::Vec;
 use std::thread;
 use std::process;
 use std::mem;
+use std::path::PathBuf;
+
+extern crate ice_t;
 
 fn string_to_static_str(s: String) -> &'static str {
     unsafe {
@@ -20,22 +23,6 @@ fn string_to_static_str(s: String) -> &'static str {
         mem::forget(s);
         ret
     }
-}
-fn check(d: Vec<String>, t: &'static str) -> bool {
-    // println!("check");
-    let mut catch: bool = false;
-    let a: &'static str = &*t;
-    for d in d.iter() {
-        if (d.starts_with('.')) {
-            continue;
-        }
-        let r = d.contains(&a);
-        if (r == true) {
-            println!("{} is in this directory", d);
-            catch = true;
-        }
-    }
-    catch
 }
 
 fn lop(p: &std::path::PathBuf, target: &'static str) {
@@ -45,30 +32,27 @@ fn lop(p: &std::path::PathBuf, target: &'static str) {
 }
 
 
-fn tos(p: &std::path::PathBuf, target: &'static str) -> bool {
-    let paths = fs::read_dir(p).unwrap();
-    let names = paths
-        .map(|entry| {
-            let entry = entry.unwrap();
-
-            let entry_path = entry.path();
-
-            let file_name = entry_path.file_name().unwrap();
-
-            let file_name_as_str = file_name.to_str().unwrap();
-
-            let file_name_as_string = String::from(file_name_as_str);
-
-            file_name_as_string
-        })
-        .collect::<Vec<String>>();
-    let dir: Vec<String> = names;
-    if (dir.len() == 0) {
-        return false;
+fn check(d: Vec<String>, t: &'static str) {
+    let mut catch: bool = false;
+    let a: &'static str = &*t;
+    for d in d.iter() {
+        if (d.starts_with('.')) {
+            continue;
+        }
+        let r = d.contains(&a);
+        if (r == true) {
+            let mut buf = PathBuf::from(d);
+            let cd = env::current_dir().unwrap();
+            println!("{} is in this directory -> {:?}", d, cd);
+        }
     }
+}
+
+
+fn tos(p: &std::path::PathBuf, target: &'static str) {
+    let names = ice_t::entry_to_string(&p);
     let t = String::from(target);
-    let ans = check(dir, target);
-    ans
+    check(names, target);
 }
 
 fn pd(p: &std::path::PathBuf, target: &'static str) {
@@ -78,10 +62,7 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
                 let e = entry.path();
                 let md = metadata(entry.path()).unwrap();
                 if (md.is_dir()) {
-                    if (tos(&e, target)) {
-                        println!("{:?}", entry.path());
-                        // println!("{:?}", metadata(entry.path()).unwrap());
-                    }
+                    tos(&e, target);
                     let path_buf = entry.path();
                     lop(&path_buf, target);
                 }
@@ -93,7 +74,8 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
 fn sd(target: &'static str) {
     let t = target.clone();
     let cd = env::current_dir().unwrap();
-    tos(&cd, t);
+    let file = ice_t::only_file_to_string(&cd);
+    check(file, t);
     if let Ok(entries) = fs::read_dir("") {
         for entry in entries {
             if let Ok(entry) = entry {

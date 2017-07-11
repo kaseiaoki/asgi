@@ -1,7 +1,6 @@
 [package]
-name = "asgi"
+name = "ice_t"
 version = "0.1.0"
 authors = ["kaseiaoki <aoki.11235813@ezweb.ne.jp>"]
 
-[dependencies.ice_t]
-path = "ice_t"
+[dependencies]

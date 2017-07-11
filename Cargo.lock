@@ -1,4 +1,11 @@
 [root]
 name = "asgi"
 version = "0.1.0"
+dependencies = [
+ "ice_t 0.1.0",
+]
+
+[[package]]
+name = "ice_t"
+version = "0.1.0"
 
