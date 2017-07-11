@@ -32,39 +32,26 @@ fn lop(p: &std::path::PathBuf, target: &'static str) {
 }
 
 
-fn check(d: Vec<String>, t: &'static str) {
-    let mut catch: bool = false;
+fn check(p: &std::path::PathBuf, t: &'static str) {
+    let names = ice_t::entry_to_string(&p);
     let a: &'static str = &*t;
-    for d in d.iter() {
-        if (d.starts_with('.')) {
-            continue;
-        }
-        let r = d.contains(&a);
-        if (r == true) {
-            let mut buf = PathBuf::from(d);
-            let cd = env::current_dir().unwrap();
-            println!("{} is in this directory -> {:?}", d, cd);
+    for names in names.iter() {
+        if names.contains(&a) {
+            let name = &names;
+            println!("{} -> {:?}", name, p);
         }
     }
 }
 
-
-fn tos(p: &std::path::PathBuf, target: &'static str) {
-    let names = ice_t::entry_to_string(&p);
-    let t = String::from(target);
-    check(names, target);
-}
 
 fn pd(p: &std::path::PathBuf, target: &'static str) {
     if let Ok(entries) = fs::read_dir(&p) {
         for entry in entries {
             if let Ok(entry) = entry {
                 let e = entry.path();
-                let md = metadata(entry.path()).unwrap();
-                if (md.is_dir()) {
-                    tos(&e, target);
-                    let path_buf = entry.path();
-                    lop(&path_buf, target);
+                if (metadata(entry.path()).unwrap().is_dir()) {
+                    check(&e, target);
+                    lop(&e, target);
                 }
             }
         }
@@ -74,14 +61,12 @@ fn pd(p: &std::path::PathBuf, target: &'static str) {
 fn sd(target: &'static str) {
     let t = target.clone();
     let cd = env::current_dir().unwrap();
-    let file = ice_t::only_file_to_string(&cd);
-    check(file, t);
+    check(&cd, t);
     if let Ok(entries) = fs::read_dir("") {
         for entry in entries {
             if let Ok(entry) = entry {
                 let e = entry.path();
-                let md = metadata(entry.path()).unwrap();
-                if (md.is_dir()) {
+                if (metadata(entry.path()).unwrap().is_dir()) {
                     let path_buf = entry.path();
                     lop(&path_buf, t);
                 }
