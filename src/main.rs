@@ -4,7 +4,6 @@ use std::io;
 use std::string::String;
 use std::io::prelude::*;
 use std::os::windows;
-// if you use unix os ↓
 // use std::os::unix;
 use std::path::Path;
 use std::fs::metadata;
